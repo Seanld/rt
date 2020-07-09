@@ -1,4 +1,5 @@
 #include <math.h>
+#include <string>
 
 // Vector2 declaration.
 
@@ -17,6 +18,8 @@ class Vector2 {
 
         Vector2 operator+(const Vector2&);
         Vector2 operator-(const Vector2&);
+
+        std::string asString();
 };
 
 // Vector2 definition:
@@ -64,6 +67,10 @@ Vector2 Vector2::operator-(const Vector2& otherVector) {
     return newVector;
 }
 
+std::string Vector2::asString() {
+    return "(" + std::to_string(this->x) + ", " + std::to_string(this->y) + ")";
+}
+
 
 
 // Vector3 declaration
@@ -84,6 +91,8 @@ class Vector3 {
 
         Vector3 operator+(const Vector3&);
         Vector3 operator-(const Vector3&);
+
+        std::string asString();
 };
 
 // Vector3 definition.
@@ -132,4 +141,8 @@ Vector3 Vector3::operator-(const Vector3& otherVector) {
     Vector3 newVector = Vector3(_x, _y, _z);
 
     return newVector;
+}
+
+std::string Vector3::asString() {
+    return "(" + std::to_string(this->x) + ", " + std::to_string(this->y) + ", " + std::to_string(this->z) + ")";
 }
