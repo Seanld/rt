@@ -51,28 +51,36 @@ ImagePlane::ImagePlane(Vector3 _position, Vector2 _size, Vector2 _resolution) {
 }
 
 Vector3** ImagePlane::getPixelPositions() {
-    float Y = (this->position.y - (this->size.x / 2)) + (this->pixelSize.x / 2);
-    float Z = (this->position.z + (this->size.y / 2)) - (this->pixelSize.y / 2);
-    Vector3 startingPoint = Vector3(this->position.x, Y, Z);
+    int width = this->resolution.x;
+    int height = this->resolution.y;
 
-    Vector3** pixelPositions = new Vector3*[(int)this->resolution.y];
+    // Initialize an empty array of Vector3 pointer arrays
+    // that stores positions of each pixel in 3D space.
+    Vector3** pixelPositions = new Vector3*[width];
 
-    for (int z=0; z<(int)this->resolution.y; z++) {
-        Vector3* row = new Vector3[(int)this->resolution.x];
+    // The upper-left pixel position of image plane.
+    // Use this to calculate the rest of the positions via multiplication.
+    Vector3 firstPixelPosition(this->position.x - (this->size.x / 2), this->position.y, this->position.z + (this->size.y / 2));
 
-        for (int y=0; y<(int)this->resolution.x; y++) {
-            Vector3 temp = Vector3(this->position.x, startingPoint.y + (y * this->pixelSize.x), startingPoint.z - (z * this->pixelSize.y));
+    // Iterate X values (horizontal position).
+    for (int x=0; x<width; x++) {
+        Vector3 posArray[height];
 
-            float clone = temp.y;
-            temp.y = temp.x;
-            temp.x = clone;
+        // Iterate Z values (vertical position).
+        for (int z=0; z<height; z++) {
+            // Create new pixel position to store in array.
+            Vector3 pixelPosition(
+                firstPixelPosition.x + (x * (this->size.x / this->resolution.x)),
+                firstPixelPosition.y,
+                firstPixelPosition.z + (z * (this->size.y / this->resolution.y))
+            );
 
-            temp.y = this->position.y;
-
-            row[y] = temp;
+            // Add new pixel to array.
+            posArray[z] = pixelPosition;
         }
 
-        pixelPositions[z] = row;
+        // Add this row of pixel positions to the 2D array.
+        pixelPositions[x] = posArray;
     }
 
     return pixelPositions;
@@ -200,13 +208,14 @@ Color*** Camera::render() {
         for (int r=0; r<screenResX; r++) {
             Vector3 pixPos = pixelPositions[c][r];
 
+            // std::cout << pixPos.asString() << std::endl;
+
             // Create a ray originated at the camera position, and heading
             // towards the position of the current pixel to test, to see if
             // the pixel needs to be recorded.
             Ray ray = Ray(this->position, pixPos);
 
             int totalObjectsTemp = this->space->totalObjects;
-            // std::cout << "TOTAL " << totalObjectsTemp << std::endl;
 
             // Check all objects in space for intersection.
             for (int o=0; o<totalObjectsTemp; o++) {
@@ -228,7 +237,7 @@ Color*** Camera::render() {
                     intersects = obj->intersect(ray);
                 }
 
-                std::cout << intersects[0] << ", " << intersects[1] << ", " << intersects[2] << std::endl;
+                // std::cout << intersects[0] << ", " << intersects[1] << ", " << intersects[2] << std::endl;
 
                 if (intersects[2] == 1.0f) {
                     // Intersection! Record color data of object.
@@ -238,7 +247,7 @@ Color*** Camera::render() {
                         pixRow[r] = obj->color;
                     }
 
-                    std::cout << "INTERSECTION!" << std::endl;
+                    // std::cout << "INTERSECTION!" << std::endl;
 
                     break; // Don't continue looping through objects if we already found one.
                 } else {
