@@ -1,6 +1,5 @@
 #include <stack>
 #include "vectors.h"
-#include <string>
 #include <iostream>
 
 
