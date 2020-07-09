@@ -16,7 +16,7 @@ int main() {
     Color*** renderedBuffer = cam.render();
 
     Vector3* pixelPosToTest = cam.screen->getPixelPositions()[49, 24];
-    std::cout << pixelPosToTest->x << std::endl;
+    
 
     // Write color data to file, 3 bytes per pixel (8 bits = 255 combos i.e. colors, 8 bits = a byte).
 
