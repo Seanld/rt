@@ -6,7 +6,7 @@ int main() {
     Space* space =  new Space(10);
     Camera cam = Camera(Vector3(0.0f, 0.0f, 0.0f), space, 400.0f, Vector2(100, 50), Vector2(100, 50), backgroundColor);
     
-    Sphere* s1 = new Sphere(Vector3(0.0f, 600.0f, 0.0f), 200.0f, new Color(255, 0, 0));
+    Sphere* s1 = new Sphere(Vector3(0.0f, 600.0f, 250.0f), 200.0f, new Color(255, 0, 0));
     space->addObject(s1);
 
     // Ray testRay = Ray(cam.position, Vector3(-100.5, 400, 0.5));
@@ -14,6 +14,9 @@ int main() {
     // std::cout << testIntersectionResult[2] << std::endl;
 
     Color*** renderedBuffer = cam.render();
+
+    Vector3* pixelPosToTest = cam.screen->getPixelPositions()[49, 24];
+    std::cout << pixelPosToTest->x << std::endl;
 
     // Write color data to file, 3 bytes per pixel (8 bits = 255 combos i.e. colors, 8 bits = a byte).
 
@@ -23,8 +26,14 @@ int main() {
         for (int b=0; b<cam.screenRes.x; b++) {
             Color* c = renderedBuffer[a][b];
 
-            // std::cout << c->r << ", " << c->g << ", " << c->b << std::endl;
+            if (c->r == 255) {
+                std::cout << "R";
+            } else {
+                std::cout << "0";
+            }
         }
+
+        std::cout << std::endl;
     }
 
     // imageBinFile.close();
